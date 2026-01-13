@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Life Clicker — V1.0</title>
+  <link rel="stylesheet" href="main-page.css" />
+  <meta name="description" content="Life Clicker — click to gain Water Drops and watch the ocean!" />
+</head>
+<body>
+  <!-- Decorative sky layer (moon + stars) -->
+  <div class="sky" aria-hidden="true">
+    <div id="stars" class="stars" aria-hidden="true"></div>
+
+    <div id="moon" class="moon" aria-hidden="true">
+      <div class="crater c1"></div>
+      <div class="crater c2"></div>
+      <div class="crater c3"></div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="logo">
+      <div class="logo-icon" aria-hidden="true">💓</div>
+      <div class="logo-title">Life Clicker</div>
+    </div>
+
+    <!-- More visible version badge -->
+    <div class="version" title="Build version">V1.0</div>
+  </header>
+
+  <!-- NEW: Top counters for Lakes / Seas / Oceans -->
+  <div class="top-stats" role="region" aria-label="Global counters">
+    <div class="stat">
+      <div class="stat-icon" aria-hidden="true">🏞️</div>
+      <div class="stat-info">
+        <div class="stat-label">Lakes</div>
+        <div id="lakes-count" class="stat-value">0</div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon" aria-hidden="true">🌊</div>
+      <div class="stat-info">
+        <div class="stat-label">Seas</div>
+        <div id="seas-count" class="stat-value">0</div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon" aria-hidden="true">🌐</div>
+      <div class="stat-info">
+        <div class="stat-label">Oceans</div>
+        <div id="oceans-count" class="stat-value">0</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="game-card">
+      <!-- Settings button (top-left of the game card) -->
+      <button id="settings-btn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings-modal" aria-label="Open settings">
+        <!-- gear icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="currentColor"/>
+          <path d="M19.4 12.9c.04-.3.06-.61.06-.9s-.02-.6-.06-.9l2.1-1.6a.5.5 0 0 0 .12-.64l-2-3.4a.5.5 0 0 0-.6-.22l-2.5 1a8.1 8.1 0 0 0-1.6-.9l-.4-2.6A.5.5 0 0 0 12.6 2h-4a.5.5 0 0 0-.5.42l-.4 2.6c-.56.24-1.08.56-1.6.9l-2.5-1a.5.5 0 0 0-.6.22l-2 3.4a.5.5 0 0 0 .12.64l2.1 1.6c-.04.3-.06.61-.06.9s.02.6.06.9L2.2 14.5a.5.5 0 0 0-.12.64l2 3.4c.14.24.44.34.7.22l2.5-1c.5.34 1.04.65 1.6.9l.4 2.6a.5.5 0 0 0 .5.42h4c.24 0 .44-.17.5-.4l.4-2.6c.56-.24 1.08-.56 1.6-.9l2.5 1c.26.12.56.02.7-.22l2-3.4a.5.5 0 0 0-.12-.64l-2.1-1.6z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <!-- Settings modal (centered) -->
+      <div id="settings-modal" class="settings-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="settings-title">
+        <div class="settings-card" role="document">
+          <header class="settings-card-header">
+            <h2 id="settings-title">Settings</h2>
+            <button id="settings-close" class="settings-close" type="button" aria-label="Close settings">✕</button>
+          </header>
+
+          <div class="settings-card-body">
+            <label class="setting-row">
+              <div class="setting-label">Sound</div>
+              <div class="setting-control">
+                <input id="sound-toggle" type="checkbox" />
+              </div>
+            </label>
+
+            <label class="setting-row">
+              <div class="setting-label">Autosave</div>
+              <div class="setting-control">
+                <select id="autosave-select" aria-label="Autosave interval">
+                  <option value="15000">15s</option>
+                  <option value="30000">30s</option>
+                  <option value="45000" selected>45s</option>
+                  <option value="90000">90s</option>
+                </select>
+              </div>
+            </label>
+
+            <div class="setting-note">Autosave saves your progress automatically to your browser.</div>
+
+            <div class="settings-actions">
+              <button id="reset-progress" class="btn btn-danger" type="button">Reset Progress</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="life-label">Water Drops</div>
+        <div id="life-count" class="life-count" aria-live="polite">0</div>
+        <div class="meta">
+          <div>Per Click: <span id="per-click">1</span></div>
+          <div>Per Second: <span id="per-second">0</span></div>
+        </div>
+      </div>
+
+      <div class="click-area">
+        <button id="click-btn" class="click-btn" aria-label="Gain water drop by clicking">
+          <!-- Designed water drop SVG -->
+          <div class="drop-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="88" height="88" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <defs>
+                <linearGradient id="dropGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#9be7ff"/>
+                  <stop offset="55%" stop-color="#4ec7ff"/>
+                  <stop offset="100%" stop-color="#0ea6e6"/>
+                </linearGradient>
+                <radialGradient id="dropShine" cx="30%" cy="25%" r="50%">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>
+                  <stop offset="60%" stop-color="rgba(255,255,255,0.12)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                </radialGradient>
+              </defs>
+              <path d="M32 6c0 0-14 16-14 26a14 14 0 0 0 28 0C46 22 32 6 32 6z" fill="url(#dropGrad)"/>
+              <path d="M38 12c-2 2-6 8-6 8s4 0 6-2c2-2 0-6 0-6z" fill="url(#dropShine)" opacity=".9"/>
+              <ellipse cx="26" cy="40" rx="7" ry="3" fill="rgba(255,255,255,0.08)"/>
+            </svg>
+          </div>
+
+          <div class="drop-text">Water Drop</div>
+        </button>
+
+        <div id="effects" class="effects" aria-hidden="true"></div>
+      </div>
+
+      <div class="controls">
+        <div class="small-print">Tip: Click fast — there are no upgrades right now.</div>
+      </div>
+    </section>
+
+    <aside class="shop-card" aria-label="Shop">
+      <h2>Shop</h2>
+
+      <div id="shop-items" class="shop-items">
+        <button class="shop-item" data-upgrade="auto1">
+          💧 Auto Drip I<br><small>+1 / sec — Cost: 50</small>
+        </button>
+
+        <button class="shop-item" data-upgrade="click1">
+          👆 Strong Click I<br><small>+1 / click — Cost: 75</small>
+        </button>
+
+        <button class="shop-item" data-upgrade="auto5">
+          💧 Auto Drip II<br><small>+5 / sec — Cost: 2 Lakes</small>
+        </button>
+
+        <button class="shop-item" data-upgrade="click5">
+          👆 Strong Click II<br><small>+5 / click — Cost: 3 Lakes</small>
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Decorative ocean layer (bottom) using inline SVG for realistic layered waves -->
+  <div class="ocean" aria-hidden="true">
+    <svg class="ocean-svg" viewBox="0 0 1600 300" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="g-back" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#06314a"/>
+          <stop offset="100%" stop-color="#03202a"/>
+        </linearGradient>
+        <linearGradient id="g-mid" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#0b3b57"/>
+          <stop offset="100%" stop-color="#053041"/>
+        </linearGradient>
+        <linearGradient id="g-front" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#0f4b68"/>
+          <stop offset="100%" stop-color="#0a3a54"/>
+        </linearGradient>
+
+        <linearGradient id="foam" x1="0" x2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
+          <stop offset="40%" stop-color="rgba(255,255,255,0.35)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,0.05)" />
+        </linearGradient>
+
+        <filter id="waveBlur" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="6" result="b"/>
+          <feMerge>
+            <feMergeNode in="b"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g class="wave-layer" id="wave-back" data-speed="0.22" filter="url(#waveBlur)">
+        <path class="wave-path wave-back-path" fill="url(#g-back)"></path>
+      </g>
+
+      <g class="wave-layer" id="wave-mid" data-speed="0.5">
+        <path class="wave-path wave-mid-path" fill="url(#g-mid)"></path>
+      </g>
+
+      <g class="wave-layer" id="wave-front" data-speed="0.9">
+        <path class="wave-path wave-front-path" fill="url(#g-front)"></path>
+        <path class="wave-foam" stroke="url(#foam)" stroke-width="2" fill="none" opacity="0.9"></path>
+      </g>
+
+      <rect class="ocean-gloss" x="0" y="0" width="100%" height="100%" fill="url(#g-front)" opacity="0.04"></rect>
+    </svg>
+  </div>
+
+  <footer class="footer">
+    <div>Made with ❤️ — Life Clicker</div>
+    <div class="credits">v1.0</div>
+  </footer>
+
+  <script src="main-page.js" defer></script>
+</body>
+</html>
+
+
